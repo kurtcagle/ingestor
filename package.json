@@ -1,0 +1,33 @@
+{
+  "name": "ingestor",
+  "version": "1.0.0",
+  "description": "A took for ingesting triples from multiple sources.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kurtcagle/ingestor.git"
+  },
+  "keywords": [
+    "rdf",
+    "turtle",
+    "ingestor",
+    "ingestion",
+    "spreadsheets",
+    "Excel",
+    "odbc"
+  ],
+  "author": "kurt.cagle@gmail.com",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kurtcagle/ingestor/issues"
+  },
+  "homepage": "https://github.com/kurtcagle/ingestor#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "nodemon": "^1.17.3",
+    "xlsx": "^0.12.10"
+  }
+}
