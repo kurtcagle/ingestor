@@ -1,6 +1,7 @@
 // index for ingestor
 if(typeof require !== 'undefined') XLSX = require('xlsx');
-function titleCase(expr){
+function compactToken(expr){
+	expr = expr.replace(/[^\w\s]|_/g, "").replace(/\s+/g, " ");
 	var tokens = expr.trim().split(/\s+/);
 	return tokens.map((token)=>token.substr(0,1).toUpperCase()+token.substr(1)).join('');
 }
@@ -27,7 +28,7 @@ var vocabWorksheet = workbook.Sheets["Vocab"];
 var vocabArr = XLSX.utils.sheet_to_json(vocabWorksheet);
 
 var vocabTemplate = (row)=>`
-vocab:_${titleCase(row["Pref Label"])}
+vocab:_${compactToken(row["Pref Label"])}
     a vocab: ;
     vocab:prefLabel "${row["Pref Label"]}"^^xsd:string ;
     rdfs:label "${row["Pref Label"]}"^^xsd:string ;
@@ -40,11 +41,11 @@ var termWorksheet = workbook.Sheets["Term"];
 var termArr = XLSX.utils.sheet_to_json(termWorksheet);
 
 var termTemplate = (row)=>`
-term:_${titleCase(row["Vocab"])}_${titleCase(row["Pref Label"])}
+term:_${compactToken(row["Vocab"])}_${compactToken(row["Pref Label"])}
     a term: ;
     term:prefLabel "${row["Pref Label"]}"^^xsd:string ;
     rdfs:label "${row["Pref Label"]}"^^xsd:string ;
-    term:hasVocab vocab:_${titleCase(row["Vocab"])} ;
+    term:hasVocab vocab:_${compactToken(row["Vocab"])} ;
     ${row["Symbol"]?`term:symbol "${row["Symbol"]}"^^xsd:string ;`:''}
     ${row["Default Value"]?`term:defaultValue "${row["Default Value"]}"^^xsd:string ;`:''}
     term:description """${row["Description"]}"""^^xsd:string ;
@@ -61,20 +62,21 @@ var npcAttributes = [
 	"Wisdom","Magic","Luck","Creativity"];
 var currencies = ["Farthing","Penny","Crescent","Lunad","Solad"]	
 var npcTemplate = (row,npcAttributes)=>`
-npc:_${titleCase(row.Name)}
+npc:_${compactToken(row.Name)}
     a npc: ;
     term:prefLabel "${row.Name}"^^xsd:string ;
     rdfs:label "${row.Name}"^^xsd:string ;
-    npc:hasGender term:_Gender_${titleCase(row.Gender)} ;
-    npc:hasSpecies term:_Species_${titleCase(row.Species)} ;
-    npc:hasVocation term:_Vocation_${titleCase(row.Vocation)} ;
-    npc:hasAlignment term:_Alignment_${titleCase(row.Alignment)} ;
+    npc:hasGender term:_Gender_${compactToken(row.Gender)} ;
+    npc:hasSpecies term:_Species_${compactToken(row.Species)} ;
+    npc:hasVocation term:_Vocation_${compactToken(row.Vocation)} ;
+    npc:hasApparentAge term:_ApparentAge_${compactToken(row["Apparent Age"])} ;
+    npc:hasAlignment term:_Alignment_${compactToken(row.Alignment)} ;
     ${npcAttributes.map((attribute)=>`
-    npc:has${titleCase(attribute)} "${row[attribute]}"^^xsd:integer ;`).join('')};
+    npc:has${compactToken(attribute)} "${row[attribute]}"^^xsd:integer ;`).join('')};
     npc:hasPurse ${currencies.map((currency)=>`
    		[
    			a purse: ;
-   			purse:currencyType term:_Currency_${titleCase(currency)} ;
+   			purse:currencyType term:_Currency_${compactToken(currency)} ;
    			purse:count "${row[currency]}"^^xsd:integer
    		]`)};
     npc:description """${row["Description"]}"""^^xsd:string ;
